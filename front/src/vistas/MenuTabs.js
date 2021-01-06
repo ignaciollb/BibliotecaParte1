@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -53,6 +53,14 @@ const useStyles = makeStyles((theme) => ({
 export default function MenuTabs() {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
+
+  useEffect(() => {
+    const token = localStorage.getItem('TOKEN_APP_TALLER');
+    if(token==null)
+    {
+      window.location='/';
+    }
+  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

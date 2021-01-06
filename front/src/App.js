@@ -1,41 +1,58 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import axios from 'axios'
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect
+} from "react-router-dom";
+import SignIn from './vistas/Login';
+import MenuPrincipal from './vistas/MenuTabs';
+import axios from 'axios';
+
 export default function App() {
-  const { register, handleSubmit, errors } = useForm();
+  const [autorizado, setAutorizado] = useState(false);
+  const [remember, setRemember] = useState(false);
 
-  const onSubmit = data =>{
 
-    //Enviar la data a la API
-    console.log(data);
-
-    axios 
-    .post("http://localhost:9000/api/usuario/validar", data)
-    .then(
-      (response) => {
-        if(response.status==200)
-        {
-          alert("Registro ok")
-          console.log(response.data)
-        }
-      },
-      (error) => {
-        alert("error:"+error)
-      }
-    )
-    .catch((error) => {
-    
-      console.log(error);
-    });
-  } 
-  console.log(errors);
   
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input type="text" placeholder="mail" name="mail" ref={register} />
-      <input type="text" placeholder="password" name="pass" ref={register} />
 
-      <input type="submit" />
-    </form>
+
+  return (
+
+
+
+    <Router>
+      {remember ? <Redirect to="/menu"/> :""}
+
+
+      {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+      <Switch>
+
+
+        <Route path="/menu">
+           <MenuPrincipal /> 
+        </Route>
+        <Route path="/">
+          <SignIn />
+        </Route>
+
+
+      </Switch>
+
+    </Router>
   );
+}
+
+function Home() {
+  return <h2>Home</h2>;
+}
+
+function About() {
+  return <h2>About</h2>;
+}
+
+function Users() {
+  return <h2>Users</h2>;
 }
