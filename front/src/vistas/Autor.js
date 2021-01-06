@@ -223,7 +223,7 @@ export default function Autor() {
     // const { data } = await axios.get('/api/zona/listar');
 
     const { data } = await axios.get("http://localhost:9000/api/autor");
-    
+    console.log(data)
     setAutores(data.autor);
 
 
