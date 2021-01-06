@@ -138,9 +138,7 @@ export default function Usuario() {
         const { data } = await axios.get("http://localhost:9000/api/usuario/")
         setUsuarios(data.data);
     };
-    function click2() {
-        setContador(contador + 1);
-    }
+
     return (
         <Container component="main" maxWidth="md">
             <CssBaseline />
@@ -205,15 +203,3 @@ export default function Usuario() {
         </Container>
     );
 }
-
-
-/*<Button
-                    type="button"
-                    fullWidth
-                    variant="contained"
-
-                    className={classes.submit}
-                    onClick={() => { reset(); setAccion("Guardar"); setIdUsuario(null) }}
-                >
-                    Nuevo
-                </Button>*/
