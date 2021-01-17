@@ -16,6 +16,10 @@ import axios from 'axios';
 import MaterialDatatable from "material-datatable";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -41,22 +45,24 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function Autor() {
+export default function Libro() {
   const classes = useStyles();
 
   const { register, handleSubmit, errors, getValues, setValue, reset } = useForm(
-    { defaultValues: { nombre: "Nombre *", apellido: "Apellido *", edad: "Edad *", rut: "Rut *" } });
-
-  const [contador, setContador] = useState(0)
+    { defaultValues: { nombre: "", codigo: "", autor: "" } }
+  );
+  const [libros, setLibros] = useState([])
   const [autores, setAutores] = useState([])
+  const [itemsAutor, setItems] = useState([])
   const [accion, setAccion] = useState("Guardar")
-  const [idAutor, setIdAutor] = useState(null);
+  const [idAutor, setIdAutor] = useState("");
 
   useEffect(() => {
-    cargarAutor();
+    cargarLibro();
+    cargarAutores();
   }, []);
 
-  const seleccionar = (item) => {
+  /*const seleccionar = (item) => {
     setValue("nombre", item.nombre)
     setValue("apellido", item.apellido)
     setValue("edad", item.edad)
@@ -65,35 +71,16 @@ export default function Autor() {
     setAccion("Modificar")
 
 
-  }
+  }*/
   const columns = [
-    {
-      name: "Seleccionar",
-      options: {
-        headerNoWrap: true,
-        customBodyRender: (item, tablemeta, update) => {
-          return (
-            <Button
-              variant="contained"
-              className="btn-block"
-              onClick={() => seleccionar(item)}
-            >
-              Seleccionar
-            </Button>
-          );
-        },
-      },
-    },
     {
       name: 'Nombre',
       field: 'nombre'
     },
     {
-      name: 'Apellido',
-      field: 'apellido'
+      name: 'Codigo',
+      field: 'codigo'
     }
-
-
   ];
 
 
@@ -124,16 +111,16 @@ export default function Autor() {
 
     if (accion == "Guardar") {
       axios
-        .post("http://localhost:9000/api/autor", data, {
-          headers: {
-            Accept: '*/*'
-          }
+        .post("http://localhost:9000/api/libro",{
+          codigo: data.codigo,
+          nombre: data.nombre,
+          autor: idAutor
         })
         .then(
           (response) => {
             if (response.status == 200) {
               alert("Registro ok")
-              cargarAutor();
+              cargarLibro();
               reset();
             }
           },
@@ -161,7 +148,7 @@ export default function Autor() {
           (response) => {
             if (response.status == 200) {
               alert("Modificado")
-              cargarAutor();
+              cargarLibro();
               reset();
               setIdAutor(null)
               setAccion("Guardar")
@@ -199,7 +186,7 @@ export default function Autor() {
         (response) => {
           if (response.status == 200) {
 
-            cargarAutor();
+            cargarLibro();
             reset();
             setIdAutor(null)
             setAccion("Guardar")
@@ -224,18 +211,24 @@ export default function Autor() {
         console.log(error);
       });
   }
-  const cargarAutor = async () => {
+  const cargarLibro = async () => {
     // const { data } = await axios.get('/api/zona/listar');
 
-    const { data } = await axios.get("http://localhost:9000/api/autor");
-
-    setAutores(data.autor);
-
-
+    const { data } = await axios.get("http://localhost:9000/api/libroautor");
+    setLibros(data.libroConAutor);
   };
-  function click2() {
-    setContador(contador + 1);
-  }
+  const cargarAutores = async () => {
+    const { data } = await axios.get("http://localhost:9000/api/autor");
+    console.log("post axios");
+    console.log(data.autor);
+    setAutores(data.autor);
+  };
+
+  const handleChange = (event) => {
+    setIdAutor(event.target.value);
+    console.log(idAutor);
+  };
+
   return (
     <Container component="main" maxWidth="md">
       <CssBaseline />
@@ -251,7 +244,7 @@ export default function Autor() {
           Nuevo
           </Button>
         <Typography component="h1" variant="h5">
-          Autor - Contador: {contador}
+          Registrar libro
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
@@ -262,7 +255,6 @@ export default function Autor() {
                 variant="outlined"
                 required
                 fullWidth
-            
                 label="Nombre"
                 autoFocus
                 inputRef={register}
@@ -273,42 +265,53 @@ export default function Autor() {
                 variant="outlined"
                 required
                 fullWidth
-                id="lastName"
-                label="Last Name"
-                name="apellido"
-                autoComplete="lname"
+                id="codigo"
+                label="Código"
+                name="codigo"
                 inputRef={register}
               />
             </Grid>
             <Grid item xs={12}>
-              <Select
-                labelId="demo-customized-select-label"
-                id="demo-customized-select"
-      
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-              
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="rut"
-                label="rut"
-                id="rut"
-                autoComplete="rut"
-                inputRef={register}
+              <FormControl fullWidth>
+              <InputLabel id="demo-customized-select">Seleccione autor</InputLabel>
+                {/*<Select
+                  labelId="demo-customized-select-label"
+                  id="demo-customized-select"
+                  defaultValue=""
+                  onChange={handleChange}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {itemsAutor}
+                  
+                </Select>*/}
+                <Select
+                  onChange={handleChange}
+                  value={idAutor}
+                  labelWidth={"Autor"}
+                  margin="dense"
+                >
+                  <MenuItem selected={true} key={1} value={0}>
+                    Seleccione Autor
+                  </MenuItem>
 
-              />
+                  {autores !== null ? (
+                    autores.map((item, index) => {
+                      return (
+                        <MenuItem key={index} value={item._id}>
+                          <em>{item.nombre}</em>
+                        </MenuItem>
+                      );
+                    })
+                  ) : (
+                      <MenuItem key={-1} value={0}>
+                        <em>''</em>
+                      </MenuItem>
+                    )}
+                </Select>
+              </FormControl>
             </Grid>
-
           </Grid>
           <Button
             type="submit"
@@ -319,21 +322,11 @@ export default function Autor() {
           >
             {accion}
           </Button>
-          <Button
-            type="button"
-            fullWidth
-            variant="contained"
-            color="secondary"
-            className={classes.delete}
-            onClick={() => { eliminar() }}
-          >
-            Eliminar
-          </Button>
-          <Grid container spacing={1}>
-            <MaterialDatatable
 
-              title={"Autores"}
-              data={autores}
+          <Grid item xs={12}>
+            <MaterialDatatable
+              title={"Libros"}
+              data={libros}
               columns={columns}
               options={options}
             />
