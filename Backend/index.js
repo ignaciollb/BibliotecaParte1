@@ -36,8 +36,10 @@ mongoose.connect('mongodb+srv://ignaciollb:123@cluster0.gmmvc.mongodb.net/taller
     if(err){
         console.log("NO CONECTA")
     }
-    app.listen(9000, () => {
+    else{
+        app.listen(9000, () => {
 
-        console.log("Esta corriendo en puerto 9000")
-    })
+            console.log("Esta corriendo en puerto 9000")
+        })
+    }
 })
